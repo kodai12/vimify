@@ -200,6 +200,8 @@ endfunction
 
 function! s:SearchTrack(query)
 python3 << endpython
+import sys
+sys.setdefaultencoding('utf-8')
 import vim
 
 auth_url = "https://accounts.spotify.com/api/token"
