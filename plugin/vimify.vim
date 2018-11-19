@@ -201,6 +201,7 @@ endfunction
 function! s:SearchTrack(query)
 python3 << endpython
 import vim
+import unicodedata
 
 def is_japanese(string):
     for ch in string:
