@@ -210,6 +210,9 @@ auth_resp = urllib.request.urlopen(auth_req)
 auth_code = json.loads(auth_resp.read())["access_token"]
 
 search_query = vim.eval("a:query").replace(' ', '+')
+if is_japanese(search_query):
+  search_query = search_query.encode('utf-8')
+endif
 url = "https://api.spotify.com/v1/search?q={}&type=track".format(search_query)
 req = urllib.request.Request(url,)
 req.add_header('Authorization', "Bearer {}".format(auth_code))
@@ -223,6 +226,15 @@ if len(j) is not 0:
     vim.command('call s:VimifySearchBuffer(a:query, "Search")')
 else:
     vim.command("echo 'No tracks found'")
+
+def is_japanese(string):
+    for ch in string:
+        name = unicodedata.name(ch)
+        if "CJK UNIFIED" in name \
+        or "HIRAGANA" in name \
+        or "KATAKANA" in name:
+            return True
+    return False
 endpython
 endfunction
 
