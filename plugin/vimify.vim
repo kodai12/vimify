@@ -200,8 +200,6 @@ endfunction
 
 function! s:SearchTrack(query)
 python3 << endpython
-import io,sys
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 import vim
 
 auth_url = "https://accounts.spotify.com/api/token"
