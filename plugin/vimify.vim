@@ -222,7 +222,6 @@ auth_code = json.loads(auth_resp.read())["access_token"]
 search_query = vim.eval("a:query").replace(' ', '+')
 if is_japanese(search_query):
   search_query = search_query.encode('utf-8')
-endif
 url = "https://api.spotify.com/v1/search?q={}&type=track".format(search_query)
 req = urllib.request.Request(url,)
 req.add_header('Authorization', "Bearer {}".format(auth_code))
