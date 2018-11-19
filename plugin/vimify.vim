@@ -202,6 +202,15 @@ function! s:SearchTrack(query)
 python3 << endpython
 import vim
 
+def is_japanese(string):
+    for ch in string:
+        name = unicodedata.name(ch)
+        if "CJK UNIFIED" in name \
+        or "HIRAGANA" in name \
+        or "KATAKANA" in name:
+            return True
+    return False
+
 auth_url = "https://accounts.spotify.com/api/token"
 auth_req = urllib.request.Request(auth_url,
 "grant_type=client_credentials".encode('ascii'),)
@@ -226,15 +235,6 @@ if len(j) is not 0:
     vim.command('call s:VimifySearchBuffer(a:query, "Search")')
 else:
     vim.command("echo 'No tracks found'")
-
-def is_japanese(string):
-    for ch in string:
-        name = unicodedata.name(ch)
-        if "CJK UNIFIED" in name \
-        or "HIRAGANA" in name \
-        or "KATAKANA" in name:
-            return True
-    return False
 endpython
 endfunction
 
