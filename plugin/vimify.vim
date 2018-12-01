@@ -202,7 +202,7 @@ python3 << endpython
 import vim
 
 auth_url = "https://accounts.spotify.com/api/token"
-auth_req = urllib.request.Request(auth_url)
+auth_req = urllib.request.Request(auth_url,
 "grant_type=client_credentials".encode('ascii'),)
 auth_req.add_header('Authorization', "Basic {}".format(vim.eval("g:spotify_token")))
 auth_resp = urllib.request.urlopen(auth_req)
