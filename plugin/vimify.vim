@@ -200,27 +200,16 @@ endfunction
 function! s:SearchTrack(query)
 python3 << endpython
 import vim
-import unicodedata
-
-def is_japanese(string):
-    for ch in string:
-        name = unicodedata.name(ch)
-        if "CJK UNIFIED" in name \
-        or "HIRAGANA" in name \
-        or "KATAKANA" in name:
-            return True
-    return False
 
 auth_url = "https://accounts.spotify.com/api/token"
-auth_req = urllib.request.Request(auth_url,
+auth_req = urllib.request.Request(auth_url)
 "grant_type=client_credentials".encode('ascii'),)
 auth_req.add_header('Authorization', "Basic {}".format(vim.eval("g:spotify_token")))
 auth_resp = urllib.request.urlopen(auth_req)
 auth_code = json.loads(auth_resp.read())["access_token"]
 
 search_query = vim.eval("a:query").replace(' ', '+')
-if is_japanese(search_query):
-  search_query = search_query.encode('utf-8')
+search_query = urllib.parse.quote(search_query)
 url = "https://api.spotify.com/v1/search?q={}&type=track".format(search_query)
 req = urllib.request.Request(url,)
 req.add_header('Authorization', "Bearer {}".format(auth_code))
