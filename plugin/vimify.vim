@@ -193,6 +193,17 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
 endpython
 endfunction
 
+function! s:SetVolume(vol)
+python3 << endpython
+import vim
+if osSystem == 'Darwin':
+  subprocess.call(['osascript',
+                   '-e'
+                   'tell app "spotify" to set sound volume to ' + vim.eval("a:vol").split()[0]],
+                   stdout=open(os.devnull, 'wb'))
+endpython
+endfunction
+
 " *************************************************************************** "
 " ***********************      SpotfyAPI wrappers      ********************** "
 " *************************************************************************** "
@@ -292,5 +303,6 @@ command!            SpNext      call s:Next()
 command!            SpPrevious  call s:Previous()
 command!            SpSelect    call s:SelectSong()
 command! -nargs=1   SpSearch    call s:SearchTrack(<f-args>)
+command! -nargs=1   SpVolume    call s:SetVolume(<f-args>)
 
 
