@@ -11,7 +11,7 @@ if exists('g:vimifyInited')
 endif
 let g:vimifyInited = 0
 
-python3 << endpython
+python3 << Endpython
 import subprocess
 import os
 import platform
@@ -41,14 +41,14 @@ def populate(track, albumName=None, albumIDNumber=None):
     info = {"uri": uri, "artistID": artistID, "albumID": albumID}
     IDs.append(info)
 
-endpython
+Endpython
 
 " *************************************************************************** "
 " ***********************     Spotfy dbus wrappers     ********************** "
 " *************************************************************************** "
 
 function! s:Play()
-python3 << endpython
+python3 << Endpython
 if osSystem == 'Darwin':
   subprocess.call(['osascript',
                    '-e'
@@ -61,11 +61,11 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
                    '/org/mpris/MediaPlayer2',
                    'org.mpris.MediaPlayer2.Player.Play'],
                    stdout=open(os.devnull, 'wb'))
-endpython
+Endpython
 endfunction
 
 function! s:Pause()
-python3 << endpython
+python3 << Endpython
 if osSystem == 'Darwin':
   subprocess.call(['osascript',
                    '-e'
@@ -78,11 +78,11 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
                    '/org/mpris/MediaPlayer2',
                    'org.mpris.MediaPlayer2.Player.Pause'],
                    stdout=open(os.devnull, 'wb'))
-endpython
+Endpython
 endfunction
 
 function! s:Toggle()
-python3 << endpython
+python3 << Endpython
 if osSystem == 'Darwin':
   subprocess.call(['osascript',
                    '-e'
@@ -95,12 +95,12 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
                    '/org/mpris/MediaPlayer2',
                    'org.mpris.MediaPlayer2.Player.PlayPause'],
                    stdout=open(os.devnull, 'wb'))
-endpython
+Endpython
 endfunction
 
 
 function! s:Next()
-python3 << endpython
+python3 << Endpython
 if osSystem == 'Darwin':
   subprocess.call(['osascript',
                    '-e'
@@ -113,11 +113,11 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
                    '/org/mpris/MediaPlayer2',
                    'org.mpris.MediaPlayer2.Player.Next'],
                    stdout=open(os.devnull, 'wb'))
-endpython
+Endpython
 endfunction
 
 function! s:Previous()
-python3 << endpython
+python3 << Endpython
 if osSystem == 'Darwin':
   subprocess.call(['osascript',
                    '-e'
@@ -130,12 +130,12 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
                    '/org/mpris/MediaPlayer2',
                    'org.mpris.MediaPlayer2.Player.Previous'],
                    stdout=open(os.devnull, 'wb'))
-endpython
+Endpython
 endfunction
 
 function! s:LoadTrack(track)
 call s:Pause()
-python3 << endpython
+python3 << Endpython
 import vim
 if osSystem == 'Darwin':
   subprocess.call(['osascript',
@@ -150,12 +150,12 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
                    'org.mpris.MediaPlayer2.Player.OpenUri',
                    'string:spotify:track:'+vim.eval("a:track")],
                    stdout=open(os.devnull, 'wb'))
-endpython
+Endpython
 endfunction
 
 function! s:LoadAlbum(album)
 call s:Pause()
-python3 << endpython
+python3 << Endpython
 import vim
 if osSystem == 'Darwin':
   subprocess.call(['osascript',
@@ -170,12 +170,12 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
                    'org.mpris.MediaPlayer2.Player.OpenUri',
                    'string:spotify:album:'+vim.eval("a:album")],
                    stdout=open(os.devnull, 'wb'))
-endpython
+Endpython
 endfunction
 
 function! s:LoadArtist(artist)
 call s:Pause()
-python3 << endpython
+python3 << Endpython
 import vim
 if osSystem == 'Darwin':
   subprocess.call(['osascript',
@@ -190,7 +190,7 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
                    'org.mpris.MediaPlayer2.Player.OpenUri',
                    'string:spotify:artist:'+vim.eval("a:artist")],
                    stdout=open(os.devnull, 'wb'))
-endpython
+Endpython
 endfunction
 
 " *************************************************************************** "
@@ -198,7 +198,7 @@ endfunction
 " *************************************************************************** "
 
 function! s:SearchTrack(query)
-python3 << endpython
+python3 << Endpython
 import vim
 
 auth_url = "https://accounts.spotify.com/api/token"
@@ -206,7 +206,7 @@ auth_req = urllib.request.Request(auth_url,
 "grant_type=client_credentials".encode('ascii'),)
 auth_req.add_header('Authorization', "Basic {}".format(vim.eval("g:spotify_token")))
 auth_resp = urllib.request.urlopen(auth_req)
-auth_code = json.loads(auth_resp.read())["access_token"]
+auth_code = json.loads(auth_resp.read().decode('utf-8'))["access_token"]
 
 search_query = vim.eval("a:query").replace(' ', '+')
 search_query = urllib.parse.quote(search_query)
@@ -214,7 +214,7 @@ url = "https://api.spotify.com/v1/search?q={}&type=track".format(search_query)
 req = urllib.request.Request(url,)
 req.add_header('Authorization', "Bearer {}".format(auth_code))
 resp = urllib.request.urlopen(req)
-j = json.loads(resp.read())["tracks"]["items"]
+j = json.loads(resp.read().decode('utf-8'))["tracks"]["items"]
 if len(j) is not 0:
   IDs = []
   ListedElements = []
@@ -223,7 +223,7 @@ if len(j) is not 0:
     vim.command('call s:VimifySearchBuffer(a:query, "Search")')
 else:
     vim.command("echo 'No tracks found'")
-endpython
+Endpython
 endfunction
 
 " *************************************************************************** "
@@ -240,12 +240,12 @@ function! s:VimifySearchBuffer(query, type)
     call append(line('$'), "--------------------------------------------------
                            \------------------------------------------------")
 
-python3 << endpython
+python3 << Endpython
 import vim
 for element in ListedElements:
     row = "{:<45}  {:<20}  {:<}".format(element["track"][:45], element["artist"][:20], element["album"])
     vim.command('call append(line("$"), \'{}\')'.format(row))
-endpython
+Endpython
     resize 14
     normal! gg
     5
@@ -260,7 +260,7 @@ endfunction
 function! s:SelectSong()
    let l:row = getpos('.')[1]-5
    let l:col = getpos('.')[2]
-python3 << endpython
+python3 << Endpython
 import vim
 row = int(vim.eval("l:row"))
 col = int(vim.eval("l:col"))
@@ -279,7 +279,7 @@ if row >= 0:
         album = str(ListedElements[row]["album"])
         vim.command('call s:LoadAlbum("{}")'.format(albumID))
         vim.command("echo 'Playing Album'")
-endpython
+Endpython
 endfunction
 " *************************************************************************** "
 " ***************************   Command Bindngs   *************************** "
