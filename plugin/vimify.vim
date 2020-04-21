@@ -130,7 +130,7 @@ elif osSystem == 'Linux' or osSystem == "Linux2":
                    '/org/mpris/MediaPlayer2',
                    'org.mpris.MediaPlayer2.Player.Previous'],
                    stdout=open(os.devnull, 'wb'))
-endpython
+Endpython
 endfunction
 
 function! s:LoadTrack(track)
@@ -175,7 +175,7 @@ endfunction
 
 function! s:LoadArtist(artist)
 call s:Pause()
-python3 << endpython
+python3 << Endpython
 import vim
 if osSystem == 'Darwin':
   subprocess.call(['osascript',
